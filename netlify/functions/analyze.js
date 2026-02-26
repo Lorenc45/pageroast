@@ -29,31 +29,10 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid request body' }) };
   }
 
-  const { url, pageContent: manualContent } = body;
+  const { url, pageContent } = body;
 
   if (!url) {
     return { statusCode: 400, body: JSON.stringify({ error: 'URL is required' }) };
-  }
-
-  // Use manual content if provided, otherwise scrape with ScrapingBee
-  let pageContent = (manualContent || '').trim();
-
-  if (!pageContent) {
-    try {
-      // render_js=false for speed, timeout controller to stay within Netlify's 10s limit
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 7000);
-      const scrapeUrl = `https://app.scrapingbee.com/api/v1/?api_key=${process.env.SCRAPINGBEE_API_KEY}&url=${encodeURIComponent(url)}&render_js=false&extract_rules={"text":{"selector":"body","type":"text"}}`;
-      const scrapeResp = await fetch(scrapeUrl, { signal: controller.signal });
-      clearTimeout(timeoutId);
-
-      if (scrapeResp.ok) {
-        const scrapeData = await scrapeResp.json();
-        pageContent = (scrapeData.text || '').replace(/\s+/g, ' ').slice(0, 8000).trim();
-      }
-    } catch (e) {
-      pageContent = '';
-    }
   }
 
   const prompt = `You are an expert conversion copywriter and landing page strategist who has reviewed hundreds of SaaS and indie product landing pages.
@@ -78,7 +57,7 @@ Return this exact JSON:
     {
       "name": "<dimension name>",
       "score": <0-100>,
-      "verdict": "<one sentence - what's working or not>",
+      "verdict": "<one sentence - what is working or not>",
       "issue": "<specific problem, quoting actual copy if possible>",
       "fix": "<concrete rewrite or actionable fix>"
     }
@@ -89,7 +68,7 @@ Return this exact JSON:
 
 Page URL: ${url}
 Page content:
-${pageContent || 'Could not retrieve page content. Analyze based on the URL alone and clearly note this limitation in your summary.'}`;
+${pageContent || 'No content provided - analyze based on the URL and note this limitation in your summary.'}`;
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
