@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PageRoast — Landing Page Feedback</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --surface2: #1a1a1a;
+      --border: #222222;
+      --text: #f0ede8;
+      --muted: #666;
+      --accent: #ff4d1c;
+      --accent2: #ffb347;
+      --green: #2dff8a;
+      --red: #ff3b3b;
+      --yellow: #ffd60a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE TEXTURE ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ── HEADER ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 40px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .logo-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 2px;
+      color: var(--text);
+    }
+
+    .logo-flame {
+      font-size: 20px;
+    }
+
+    .badge {
+      background: var(--accent);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 2px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: 800px;
+      margin: 80px auto 60px;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 10vw, 96px);
+      line-height: 0.95;
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 span {
+      color: var(--accent);
+      display: block;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 17px;
+      font-weight: 300;
+      max-width: 480px;
+      margin: 0 auto 48px;
+      line-height: 1.7;
+    }
+
+    /* ── INPUT AREA ── */
+    .input-section {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .api-key-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 13px;
+      width: fit-content;
+      transition: color 0.2s;
+    }
+    .api-key-toggle:hover { color: var(--text); }
+    .api-key-toggle svg { width: 14px; height: 14px; }
+
+    .api-key-field {
+      display: none;
+      margin-bottom: 12px;
+    }
+    .api-key-field.visible { display: block; }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus, input[type="password"]:focus {
+      border-color: var(--accent);
+    }
+    input::placeholder { color: var(--muted); }
+
+    .url-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .url-row input { flex: 1; font-family: 'DM Sans', sans-serif; font-size: 15px; }
+
+    .cta-btn {
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 0 28px;
+      white-space: nowrap;
+      transition: background 0.2s, transform 0.1s;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-btn:hover { background: #ff3300; }
+    .cta-btn:active { transform: scale(0.98); }
+    .cta-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+    .hint {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    /* ── LOADING ── */
+    #loading {
+      display: none;
+      max-width: 680px;
+      margin: 48px auto;
+      padding: 0 24px;
+    }
+
+    .loading-inner {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-steps {
+      list-style: none;
+      text-align: left;
+      display: inline-block;
+      margin-top: 16px;
+    }
+    .loading-steps li {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      padding: 4px 0;
+      transition: color 0.3s;
+    }
+    .loading-steps li.active { color: var(--accent); }
+    .loading-steps li.done { color: var(--green); }
+    .loading-steps li::before { content: '→ '; }
+    .loading-steps li.done::before { content: '✓ '; }
+
+    /* ── REPORT ── */
+    #report {
+      display: none;
+      max-width: 860px;
+      margin: 48px auto 80px;
+      padding: 0 24px;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Score hero */
+    .score-hero {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 32px;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 36px;
+      margin-bottom: 24px;
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .score-hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--accent);
+    }
+
+    .score-circle {
+      width: 110px;
+      height: 110px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .score-circle svg {
+      width: 110px;
+      height: 110px;
+      transform: rotate(-90deg);
+    }
+
+    .score-track { fill: none; stroke: var(--border); stroke-width: 6; }
+    .score-fill {
+      fill: none;
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 283;
+      stroke-dashoffset: 283;
+      transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .score-number {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .score-number .num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      line-height: 1;
+    }
+
+    .score-number .label {
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .score-meta h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .score-meta p {
+      color: #aaa;
+      font-size: 14px;
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    /* Biggest risk */
+    .risk-box {
+      background: rgba(255, 59, 59, 0.07);
+      border: 1px solid rgba(255, 59, 59, 0.25);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .risk-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .risk-box h3 {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .risk-box p { font-size: 14px; color: #ccc; line-height: 1.6; }
+
+    /* Dimensions */
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .dimensions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 600px) { .dimensions { grid-template-columns: 1fr; } }
+
+    .dim-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      transition: border-color 0.2s;
+      animation: fadeUp 0.4s ease both;
+    }
+    .dim-card:hover { border-color: #333; }
+
+    .dim-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .dim-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .dim-score {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 1px;
+    }
+
+    .dim-bar {
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+
+    .dim-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      width: 0;
+      transition: width 1s ease 0.3s;
+    }
+
+    .dim-verdict {
+      font-size: 13px;
+      color: #bbb;
+      margin-bottom: 10px;
+      font-style: italic;
+    }
+
+    .dim-issue {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 10px;
+      padding: 10px 12px;
+      background: var(--surface2);
+      border-radius: 4px;
+      border-left: 2px solid var(--border);
+    }
+
+    .dim-fix {
+      font-size: 13px;
+      color: var(--green);
+      padding: 10px 12px;
+      background: rgba(45, 255, 138, 0.05);
+      border-radius: 4px;
+      border-left: 2px solid rgba(45, 255, 138, 0.3);
+    }
+
+    .fix-label {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--green);
+      opacity: 0.7;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    /* Quick wins */
+    .quick-wins {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .quick-wins h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .win-item {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: #ccc;
+      animation: fadeUp 0.4s ease both;
+    }
+    .win-item:last-child { border-bottom: none; }
+
+    .win-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      color: var(--accent2);
+      flex-shrink: 0;
+      line-height: 1.4;
+    }
+
+    /* Reset button */
+    .reset-btn {
+      display: block;
+      margin: 0 auto;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      padding: 10px 24px;
+      transition: all 0.2s;
+    }
+    .reset-btn:hover { border-color: var(--text); color: var(--text); }
+
+    /* Error */
+    #error {
+      display: none;
+      max-width: 680px;
+      margin: 24px auto;
+      padding: 16px 20px;
+      background: rgba(255, 59, 59, 0.08);
+      border: 1px solid rgba(255, 59, 59, 0.3);
+      border-radius: 6px;
+      color: #ff8080;
+      font-size: 14px;
+    }
+
+    /* Score color helpers */
+    .score-high { color: var(--green); }
+    .score-mid { color: var(--yellow); }
+    .score-low { color: var(--red); }
+
+    .bar-high { background: var(--green); }
+    .bar-mid { background: var(--yellow); }
+    .bar-low { background: var(--red); }
+
+    .fill-high { stroke: var(--green); }
+    .fill-mid { stroke: var(--yellow); }
+    .fill-low { stroke: var(--red); }
+
+    /* ── EMAIL CAPTURE ── */
+    .email-capture {
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 32px;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, #111 0%, #161616 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .email-capture::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+    .email-capture .ec-icon { font-size: 32px; margin-bottom: 12px; display: block; }
+    .email-capture h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .email-capture p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 20px;
+      max-width: 380px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+    .email-row { display: flex; gap: 10px; max-width: 420px; margin: 0 auto; }
+    .email-row input { flex: 1; font-family: 'DM Sans', sans-serif; font-size: 14px; }
+    .email-submit {
+      background: linear-gradient(135deg, var(--accent), #ff7a1a);
+      border: none; border-radius: 6px; color: white; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
+      padding: 0 22px; white-space: nowrap; transition: opacity 0.2s, transform 0.1s;
+    }
+    .email-submit:hover { opacity: 0.9; }
+    .email-submit:active { transform: scale(0.98); }
+    .email-success { display: none; color: var(--green); font-size: 14px; margin-top: 14px; animation: fadeUp 0.4s ease both; }
+    .email-skip { display: block; margin-top: 12px; color: var(--muted); font-size: 12px; cursor: pointer; background: none; border: none; text-decoration: underline; text-underline-offset: 3px; }
+    .email-skip:hover { color: var(--text); cursor: pointer; }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <span class="logo-text">PageRoast</span>
+      <span class="logo-flame">🔥</span>
+    </div>
+    <span class="badge">Free Beta</span>
+  </header>
+
+  <section class="hero">
+    <p class="hero-eyebrow">AI-powered conversion feedback</p>
+    <h1>YOUR PAGE IS <span>LOSING SALES.</span> FIND OUT WHY.</h1>
+    <p>Paste your landing page URL. Get an honest, structured roast in under 30 seconds — scored across 6 conversion dimensions.</p>
+  </section>
+
+  <div class="input-section">
+<div class="url-row">
+      <input type="text" id="url-input" placeholder="https://yourproduct.com" />
+      <button class="cta-btn" onclick="analyze()" id="analyze-btn">Roast It →</button>
+    </div>
+    <div style="margin-top: 14px;">
+      <div class="api-key-toggle" onclick="togglePaste()" id="paste-toggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span id="paste-toggle-label">+ Paste page content manually (more accurate)</span>
+      </div>
+      <div class="api-key-field" id="paste-field">
+        <textarea id="page-content" placeholder="Copy all the text from your landing page — headlines, subheadlines, body copy, CTAs, testimonials, pricing, FAQs — and paste it here. The more you paste, the more accurate the analysis." style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:14px 16px;outline:none;resize:vertical;min-height:150px;line-height:1.6;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+        <p style="font-size:11px;color:var(--muted);margin-top:6px;">Tip: On your page, press Ctrl+A then Ctrl+C to select and copy all text, then paste here.</p>
+      </div>
+    </div>
+    <p class="hint">Free to use — 3 analyses per hour.</p>
+  </div>
+
+  <div id="error"></div>
+
+  <div id="loading">
+    <div class="loading-inner">
+      <div class="spinner"></div>
+      <p style="color: var(--muted); font-size: 13px;">Analyzing your page...</p>
+      <ul class="loading-steps" id="loading-steps">
+        <li id="step-1">Fetching page content</li>
+        <li id="step-2">Running conversion audit</li>
+        <li id="step-3">Scoring 6 dimensions</li>
+        <li id="step-4">Generating fixes</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="report"></div>
+
+  <script>
+    let apiKeyVisible = false;
+    let pasteVisible = false;
+
+    function toggleApiKey() {
+      apiKeyVisible = !apiKeyVisible;
+      document.getElementById('api-key-field').classList.toggle('visible', apiKeyVisible);
+      document.getElementById('api-toggle-label').textContent = apiKeyVisible
+        ? 'Hide API key'
+        : 'Enter your Anthropic API key';
+    }
+
+    function togglePaste() {
+      pasteVisible = !pasteVisible;
+      document.getElementById('paste-field').classList.toggle('visible', pasteVisible);
+      document.getElementById('paste-toggle-label').textContent = pasteVisible
+        ? '− Hide manual content'
+        : '+ Paste page content manually (more accurate)';
+    }
+
+    function scoreColor(s) {
+      return s >= 70 ? 'high' : s >= 45 ? 'mid' : 'low';
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('error');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    function hideError() {
+      document.getElementById('error').style.display = 'none';
+    }
+
+    function setStep(n) {
+      for (let i = 1; i <= 4; i++) {
+        const el = document.getElementById('step-' + i);
+        if (i < n) el.className = 'done';
+        else if (i === n) el.className = 'active';
+        else el.className = '';
+      }
+    }
+
+    async function analyze() {
+      hideError();
+
+      const url = document.getElementById('url-input').value.trim();
+
+      if (!url) { showError('Please enter a URL.'); return; }
+
+      document.getElementById('analyze-btn').disabled = true;
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('report').style.display = 'none';
+      setStep(1);
+
+      // Use pasted content if available, otherwise try scraping
+      let pageContent = (document.getElementById('page-content').value || '').trim();
+
+      if (pageContent) {
+        setStep(1);
+        setStep(2);
+      } else {
+        try {
+          const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+          const resp = await fetch(proxyUrl);
+          const data = await resp.json();
+          const tmp = document.createElement('div');
+          tmp.innerHTML = data.contents || '';
+          // Remove script/style tags for cleaner text
+          tmp.querySelectorAll('script, style, nav, footer').forEach(el => el.remove());
+          pageContent = tmp.innerText.replace(/\s+/g, ' ').slice(0, 8000);
+          setStep(2);
+        } catch(e) {
+          pageContent = '';
+          setStep(2);
+        }
+
+        if (!pageContent || pageContent.length < 100) {
+          // Prompt user to paste manually
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('analyze-btn').disabled = false;
+          if (!pasteVisible) togglePaste();
+          showError("Couldn't read your page automatically (it may block scrapers). Please paste your page content in the box below for an accurate analysis.");
+          return;
+        }
+      }
+
+      setStep(3);
+
+      let result;
+      try {
+        const resp = await fetch('/.netlify/functions/analyze', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ url, pageContent })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok) {
+          throw new Error(data.error || 'Something went wrong');
+        }
+
+        result = data;
+        setStep(4);
+      } catch(e) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('analyze-btn').disabled = false;
+        showError('Error: ' + e.message);
+        return;
+      }
+
+      setTimeout(() => {
+        document.getElementById('loading').style.display = 'none';
+        renderReport(result, url);
+        document.getElementById('analyze-btn').disabled = false;
+      }, 600);
+    }
+
+    function renderReport(data, url) {
+      const overall = data.overall_score;
+      const c = scoreColor(overall);
+      const circumference = 283;
+      const offset = circumference - (overall / 100) * circumference;
+
+      let dimsHTML = data.dimensions.map((d, i) => {
+        const dc = scoreColor(d.score);
+        return `
+          <div class="dim-card" style="animation-delay:${i * 0.08}s">
+            <div class="dim-header">
+              <span class="dim-name">${d.name}</span>
+              <span class="dim-score score-${dc}">${d.score}</span>
+            </div>
+            <div class="dim-bar"><div class="dim-bar-fill bar-${dc}" data-width="${d.score}%"></div></div>
+            <p class="dim-verdict">${d.verdict}</p>
+            <div class="dim-issue">${d.issue}</div>
+            <div class="dim-fix">
+              <div class="fix-label">Fix</div>
+              ${d.fix}
+            </div>
+          </div>`;
+      }).join('');
+
+      let winsHTML = data.quick_wins.map((w, i) => `
+        <div class="win-item" style="animation-delay:${i * 0.1}s">
+          <span class="win-num">${String(i+1).padStart(2,'0')}</span>
+          <span>${w}</span>
+        </div>`).join('');
+
+      document.getElementById('report').innerHTML = `
+        <div class="score-hero">
+          <div class="score-circle">
+            <svg viewBox="0 0 100 100">
+              <circle class="score-track" cx="50" cy="50" r="45"/>
+              <circle class="score-fill fill-${c}" cx="50" cy="50" r="45"
+                stroke-dasharray="${circumference}"
+                stroke-dashoffset="${circumference}"
+                id="score-arc"/>
+            </svg>
+            <div class="score-number">
+              <span class="num score-${c}">${overall}</span>
+              <span class="label">/ 100</span>
+            </div>
+          </div>
+          <div class="score-meta">
+            <h2>Overall Conversion Score</h2>
+            <p>${data.summary}</p>
+            <p style="margin-top:8px; font-size:12px; color: var(--muted); font-family: 'DM Mono', monospace;">${url}</p>
+          </div>
+        </div>
+
+        <div class="risk-box">
+          <div class="risk-icon">⚠️</div>
+          <div>
+            <h3>Biggest Risk</h3>
+            <p>${data.biggest_risk}</p>
+          </div>
+        </div>
+
+        <p class="section-label">6-Dimension Breakdown</p>
+        <div class="dimensions">${dimsHTML}</div>
+
+        <div class="quick-wins">
+          <h3>⚡ Quick Wins</h3>
+          ${winsHTML}
+        </div>
+
+        <div class="email-capture" id="email-capture">
+          <span class="ec-icon">📈</span>
+          <h3>Want to Track Your Progress?</h3>
+          <p>Get notified when we launch score history, side-by-side comparisons, and the full product. No spam — one email when it's ready.</p>
+          <div class="email-row">
+            <input type="text" id="capture-email" placeholder="you@example.com" />
+            <button class="email-submit" onclick="submitEmail()">Notify Me</button>
+          </div>
+          <div class="email-success" id="email-success">✓ You're on the list. We'll be in touch!</div>
+          <button class="email-skip" onclick="skipEmail()">No thanks, just the free tool</button>
+        </div>
+
+        <button class="reset-btn" onclick="resetApp()">← Analyze another page</button>
+      `;
+
+      document.getElementById('report').style.display = 'block';
+
+      // Animate score arc
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          document.getElementById('score-arc').style.strokeDashoffset = offset;
+        }, 100);
+
+        // Animate bars
+        document.querySelectorAll('.dim-bar-fill').forEach(bar => {
+          setTimeout(() => { bar.style.width = bar.dataset.width; }, 400);
+        });
+      });
+
+      document.getElementById('report').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function resetApp() {
+      document.getElementById('report').style.display = 'none';
+      document.getElementById('url-input').value = '';
+      document.getElementById('page-content').value = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function submitEmail() {
+      const email = document.getElementById('capture-email').value.trim();
+      if (!email || !email.includes('@')) {
+        document.getElementById('capture-email').style.borderColor = 'var(--red)';
+        setTimeout(() => document.getElementById('capture-email').style.borderColor = 'var(--border)', 1500);
+        return;
+      }
+
+      // Save to Airtable
+      try {
+        await fetch('https://api.airtable.com/v0/appY9AvBPJB9VlPQO/Waitlist', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer patxOVrosXa5CrGOq.325844ea8c4ac356bb69bf1e4f650d542b7375e5ee404cf00aa5b39b40a6b2c0',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            fields: {
+              'Email': email,
+              'URL': document.getElementById('url-input').value,
+              'Date': new Date().toISOString()
+            }
+          })
+        });
+      } catch(e) {
+        console.error('Airtable error:', e);
+      }
+
+      // Show success
+      document.querySelector('.email-row').style.display = 'none';
+      document.querySelector('.email-skip').style.display = 'none';
+      const success = document.getElementById('email-success');
+      success.style.display = 'block';
+    }
+
+    function skipEmail() {
+      document.getElementById('email-capture').style.display = 'none';
+    }
+
+    // Allow Enter key
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('url-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter') analyze();
+      });
+    });
+  </script>
+</body>
+</html>
