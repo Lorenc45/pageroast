@@ -698,37 +698,9 @@
       document.getElementById('report').style.display = 'none';
       setStep(1);
 
-      // Use pasted content if available, otherwise try scraping
-      let pageContent = (document.getElementById('page-content').value || '').trim();
-
-      if (pageContent) {
-        setStep(1);
-        setStep(2);
-      } else {
-        try {
-          const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-          const resp = await fetch(proxyUrl);
-          const data = await resp.json();
-          const tmp = document.createElement('div');
-          tmp.innerHTML = data.contents || '';
-          // Remove script/style tags for cleaner text
-          tmp.querySelectorAll('script, style, nav, footer').forEach(el => el.remove());
-          pageContent = tmp.innerText.replace(/\s+/g, ' ').slice(0, 8000);
-          setStep(2);
-        } catch(e) {
-          pageContent = '';
-          setStep(2);
-        }
-
-        if (!pageContent || pageContent.length < 100) {
-          // Prompt user to paste manually
-          document.getElementById('loading').style.display = 'none';
-          document.getElementById('analyze-btn').disabled = false;
-          if (!pasteVisible) togglePaste();
-          showError("Couldn't read your page automatically (it may block scrapers). Please paste your page content in the box below for an accurate analysis.");
-          return;
-        }
-      }
+      // Use manually pasted content if provided, otherwise let the server scrape
+      const pageContent = (document.getElementById('page-content').value || '').trim();
+      setStep(2);
 
       setStep(3);
 
