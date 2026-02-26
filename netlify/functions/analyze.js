@@ -40,8 +40,12 @@ exports.handler = async (event) => {
 
   if (!pageContent) {
     try {
-      const scrapeUrl = `https://app.scrapingbee.com/api/v1/?api_key=${process.env.SCRAPINGBEE_API_KEY}&url=${encodeURIComponent(url)}&render_js=true&extract_rules={"text":{"selector":"body","type":"text"}}`;
-      const scrapeResp = await fetch(scrapeUrl);
+      // render_js=false for speed, timeout controller to stay within Netlify's 10s limit
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 7000);
+      const scrapeUrl = `https://app.scrapingbee.com/api/v1/?api_key=${process.env.SCRAPINGBEE_API_KEY}&url=${encodeURIComponent(url)}&render_js=false&extract_rules={"text":{"selector":"body","type":"text"}}`;
+      const scrapeResp = await fetch(scrapeUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
 
       if (scrapeResp.ok) {
         const scrapeData = await scrapeResp.json();
