@@ -542,54 +542,6 @@
     .fill-mid { stroke: var(--yellow); }
     .fill-low { stroke: var(--red); }
 
-    /* ── EMAIL CAPTURE ── */
-    .email-capture {
-      border: 1px solid #2a2a2a;
-      border-radius: 8px;
-      padding: 32px;
-      margin-bottom: 24px;
-      background: linear-gradient(135deg, #111 0%, #161616 100%);
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .email-capture::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-    }
-    .email-capture .ec-icon { font-size: 32px; margin-bottom: 12px; display: block; }
-    .email-capture h3 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 26px;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-    .email-capture p {
-      color: var(--muted);
-      font-size: 14px;
-      margin-bottom: 20px;
-      max-width: 380px;
-      margin-left: auto;
-      margin-right: auto;
-      line-height: 1.6;
-    }
-    .email-row { display: flex; gap: 10px; max-width: 420px; margin: 0 auto; }
-    .email-row input { flex: 1; font-family: 'DM Sans', sans-serif; font-size: 14px; }
-    .email-submit {
-      background: linear-gradient(135deg, var(--accent), #ff7a1a);
-      border: none; border-radius: 6px; color: white; cursor: pointer;
-      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
-      padding: 0 22px; white-space: nowrap; transition: opacity 0.2s, transform 0.1s;
-    }
-    .email-submit:hover { opacity: 0.9; }
-    .email-submit:active { transform: scale(0.98); }
-    .email-success { display: none; color: var(--green); font-size: 14px; margin-top: 14px; animation: fadeUp 0.4s ease both; }
-    .email-skip { display: block; margin-top: 12px; color: var(--muted); font-size: 12px; cursor: pointer; background: none; border: none; text-decoration: underline; text-underline-offset: 3px; }
-    .email-skip:hover { color: var(--text); cursor: pointer; }
-
   </style>
 </head>
 <body>
@@ -605,25 +557,28 @@
   <section class="hero">
     <p class="hero-eyebrow">AI-powered conversion feedback</p>
     <h1>YOUR PAGE IS <span>LOSING SALES.</span> FIND OUT WHY.</h1>
-    <p>Paste your landing page URL. Get an honest, structured roast in under 30 seconds — scored across 6 conversion dimensions.</p>
+    <p>Enter your details below to get an honest, structured roast in under 30 seconds — scored across 6 conversion dimensions.</p>
   </section>
 
   <div class="input-section">
-<div class="url-row">
-      <input type="text" id="url-input" placeholder="https://yourproduct.com" />
-      <button class="cta-btn" onclick="analyze()" id="analyze-btn">Roast It →</button>
-    </div>
-    <div style="margin-top: 14px;">
-      <div class="api-key-toggle" onclick="togglePaste()" id="paste-toggle">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        <span id="paste-toggle-label">+ Paste page content manually (more accurate)</span>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;gap:12px;">
+        <div style="flex:1;">
+          <label style="display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-family:'DM Mono',monospace;">Your Email</label>
+          <input type="text" id="email-input" placeholder="you@example.com" />
+        </div>
+        <div style="flex:1;">
+          <label style="display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-family:'DM Mono',monospace;">Page URL</label>
+          <input type="text" id="url-input" placeholder="https://yourproduct.com" />
+        </div>
       </div>
-      <div class="api-key-field" id="paste-field">
-        <textarea id="page-content" placeholder="Copy all the text from your landing page — headlines, subheadlines, body copy, CTAs, testimonials, pricing, FAQs — and paste it here. The more you paste, the more accurate the analysis." style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:14px 16px;outline:none;resize:vertical;min-height:150px;line-height:1.6;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
-        <p style="font-size:11px;color:var(--muted);margin-top:6px;">Tip: On your page, press Ctrl+A then Ctrl+C to select and copy all text, then paste here.</p>
+      <div>
+        <label style="display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-family:'DM Mono',monospace;">Page Content <span style="color:var(--accent)">*required for accurate results</span></label>
+        <textarea id="page-content" placeholder="Copy all the text from your landing page — headlines, body copy, CTAs, testimonials, pricing, FAQs — and paste it here. Press Ctrl+A then Ctrl+C on your page to grab everything." style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:14px 16px;outline:none;resize:vertical;min-height:150px;line-height:1.6;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
       </div>
+      <button class="cta-btn" onclick="analyze()" id="analyze-btn" style="width:100%;padding:16px;">Roast My Page →</button>
     </div>
-    <p class="hint">Free to use — 3 analyses per hour.</p>
+    <p class="hint">Free to use — 3 analyses per hour. No spam, ever.</p>
   </div>
 
   <div id="error"></div>
@@ -689,19 +644,29 @@
     async function analyze() {
       hideError();
 
+      const email = document.getElementById('email-input').value.trim();
       const url = document.getElementById('url-input').value.trim();
+      const pageContent = (document.getElementById('page-content').value || '').trim();
 
-      if (!url) { showError('Please enter a URL.'); return; }
+      if (!email || !email.includes('@')) { showError('Please enter a valid email address.'); return; }
+      if (!url) { showError('Please enter your page URL.'); return; }
+      if (!pageContent) { showError('Please paste your page content for an accurate analysis.'); return; }
 
       document.getElementById('analyze-btn').disabled = true;
       document.getElementById('loading').style.display = 'block';
       document.getElementById('report').style.display = 'none';
       setStep(1);
 
-      // Use manually pasted content if provided, otherwise let the server scrape
-      const pageContent = (document.getElementById('page-content').value || '').trim();
-      setStep(2);
+      // Save email to Airtable upfront
+      try {
+        await fetch('/.netlify/functions/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, url })
+        });
+      } catch(e) { /* silent fail */ }
 
+      setStep(2);
       setStep(3);
 
       let result;
@@ -802,18 +767,6 @@
           ${winsHTML}
         </div>
 
-        <div class="email-capture" id="email-capture">
-          <span class="ec-icon">📈</span>
-          <h3>Want to Track Your Progress?</h3>
-          <p>Get notified when we launch score history, side-by-side comparisons, and the full product. No spam — one email when it's ready.</p>
-          <div class="email-row">
-            <input type="text" id="capture-email" placeholder="you@example.com" />
-            <button class="email-submit" onclick="submitEmail()">Notify Me</button>
-          </div>
-          <div class="email-success" id="email-success">✓ You're on the list. We'll be in touch!</div>
-          <button class="email-skip" onclick="skipEmail()">No thanks, just the free tool</button>
-        </div>
-
         <button class="reset-btn" onclick="resetApp()">← Analyze another page</button>
       `;
 
@@ -836,43 +789,12 @@
 
     function resetApp() {
       document.getElementById('report').style.display = 'none';
+      document.getElementById('email-input').value = '';
       document.getElementById('url-input').value = '';
       document.getElementById('page-content').value = '';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    async function submitEmail() {
-      const email = document.getElementById('capture-email').value.trim();
-      if (!email || !email.includes('@')) {
-        document.getElementById('capture-email').style.borderColor = 'var(--red)';
-        setTimeout(() => document.getElementById('capture-email').style.borderColor = 'var(--border)', 1500);
-        return;
-      }
-
-      // Save via Netlify function (avoids CORS)
-      try {
-        await fetch('/.netlify/functions/subscribe', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email,
-            url: document.getElementById('url-input').value
-          })
-        });
-      } catch(e) {
-        console.error('Subscribe error:', e);
-      }
-
-      // Show success
-      document.querySelector('.email-row').style.display = 'none';
-      document.querySelector('.email-skip').style.display = 'none';
-      const success = document.getElementById('email-success');
-      success.style.display = 'block';
-    }
-
-    function skipEmail() {
-      document.getElementById('email-capture').style.display = 'none';
-    }
 
     // Allow Enter key
     document.addEventListener('DOMContentLoaded', () => {
