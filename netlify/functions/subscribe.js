@@ -32,9 +32,12 @@ exports.handler = async (event) => {
       })
     });
 
+    const responseText = await resp.text();
+    console.log('Airtable status:', resp.status);
+    console.log('Airtable response:', responseText);
+
     if (!resp.ok) {
-      const err = await resp.json();
-      throw new Error(err.error?.message || 'Airtable error');
+      throw new Error(`Airtable returned ${resp.status}: ${responseText}`);
     }
 
     return {
@@ -42,6 +45,7 @@ exports.handler = async (event) => {
       body: JSON.stringify({ success: true })
     };
   } catch (e) {
+    console.log('Error:', e.message);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: e.message })
