@@ -27,7 +27,7 @@ exports.handler = async (event) => {
         fields: {
           'Email': email,
           'URL': url || '',
-          'Date': new Date().toISOString()
+          'Date': new Date().toISOString().split('T')[0]
         }
       })
     });
