@@ -849,24 +849,18 @@
         return;
       }
 
-      // Save to Airtable
+      // Save via Netlify function (avoids CORS)
       try {
-        await fetch('https://api.airtable.com/v0/appY9AvBPJB9VlPQO/Waitlist', {
+        await fetch('/.netlify/functions/subscribe', {
           method: 'POST',
-          headers: {
-            'Authorization': 'Bearer patxOVrosXa5CrGOq.325844ea8c4ac356bb69bf1e4f650d542b7375e5ee404cf00aa5b39b40a6b2c0',
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            fields: {
-              'Email': email,
-              'URL': document.getElementById('url-input').value,
-              'Date': new Date().toISOString()
-            }
+            email,
+            url: document.getElementById('url-input').value
           })
         });
       } catch(e) {
-        console.error('Airtable error:', e);
+        console.error('Subscribe error:', e);
       }
 
       // Show success
